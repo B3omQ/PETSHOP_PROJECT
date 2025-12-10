@@ -1,0 +1,33 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h2 class="mb-3">Product List</h2>
+
+<div class="row">
+    @foreach (var p in Model.Products)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card">
+
+                <img class="card-img-top"
+                     src="@(p.Images.FirstOrDefault() ?? "/images/no-image.jpg")"
+                     style="height:180px; object-fit:cover;" />
+
+                <div class="card-body">
+                    <h5 class="card-title">@p.ProductName</h5>
+                    <p class="card-text text-muted">@p.CategoryName - @p.PetName</p>
+
+                    <p class="fw-bold text-danger">$@p.Price</p>
+
+                    <a class="btn btn-primary btn-sm w-100"
+                       href="/Product/Detail?id=@p.ProductId">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
