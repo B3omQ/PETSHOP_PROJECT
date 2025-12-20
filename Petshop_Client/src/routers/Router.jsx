@@ -2,26 +2,36 @@ import React from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import Layout from '../layouts/Layout';
 import Homepage from '../pages/Homepage';
+import Errorpage from '../pages/Error/ErrorPage';
+import NotFoundPage from '../pages/Error/NotFoundPage';
 const router = createBrowserRouter([
     {
-        path : '/',
-        element : <Layout/>,
+        path: '/',
+        element: <Layout />,
         children: [
             {
                 path: '',
-                element : <Navigate to = "/home"/>
+                element: <Navigate to="/home" />
             },
             {
-                path:'home' ,
-                element: <Homepage/>
+                path: 'home',
+                element: <Homepage />
+            },
+            {
+                path: 'error',
+                element: <Errorpage />
+            },
+            {
+                path: '*' ,
+                element: <NotFoundPage/>
             }
-        ] 
+        ]
     }
 ])
 const Router = () => {
     return (
         <div>
-            <RouterProvider router={router}/>
+            <RouterProvider router={router} />
         </div>
     );
 };

@@ -1,0 +1,8 @@
+.caption {
+    color: black;
+    font-size: 30px;
+    text-align: left;
+    position: absolute;
+    left: 68%;
+    bottom: 20%
+}
