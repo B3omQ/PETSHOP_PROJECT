@@ -7,7 +7,7 @@ import Logo from './Header/Logo';
 const Header = () => {
     return (
         <>
-            <Navbar expand="lg" className="bg-body-tertiary">
+            <Navbar expand="lg" className="bg-body-tertiary" fixed='top'>
                 <Logo />
                 <Menu />
                 <User />

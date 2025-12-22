@@ -1,10 +1,21 @@
-.logo{
+.logo {
     margin-left: 30%;
 }
-.img{
-    width: 25%;
-    height: 25%;
+
+.img {
+    width: 15%;
+    height: 15%;
 }
-.user{
+
+.user {
     margin-right: 20%;
 }
+
+.menu {
+    font-size: larger;
+}
+
+.move{
+    margin-right: 5%;
+}
+

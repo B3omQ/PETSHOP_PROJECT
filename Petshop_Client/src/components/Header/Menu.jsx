@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 import { getAllCategories } from '../../services/categories';
-import { genComponentStyleHook } from 'antd/es/theme/internal';
-
+import SpinnerMenu from '../Loading/SpinnerMenu';
+import '../style/Header.css'
 const Menu = () => {
     const [showCategories, setShowCategories] = useState(false);
     const [showIntroduce, setShowIntroduce] = useState(false);
@@ -28,7 +28,6 @@ const Menu = () => {
         const fetchCategories = async () => {
             try {
                 const categories = await getAllCategories();
-                console.log(categories)
                 setCategories(categories);
                 setLoading(false);
             } catch {
@@ -42,7 +41,7 @@ const Menu = () => {
         <Container>
             <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
                 <Nav className="gap-4">
-                    <NavDropdown title="Introduce" id="basic-nav-dropdown"
+                    <NavDropdown title="Introduce" id="basic-nav-dropdown" className='menu'
                         show={showIntroduce}
                         onMouseEnter={showIntroduction}
                         onMouseLeave={hideIntroduction}
@@ -60,7 +59,7 @@ const Menu = () => {
                     <NavDropdown
                         title="Categories"
                         id="categories-dropdown"
-                        className="mega-menu-parent"
+                        className="mega-menu-parent menu"
                         show={showCategories}
                         onMouseEnter={showDropdown}
                         onMouseLeave={hideDropdown}
@@ -71,24 +70,26 @@ const Menu = () => {
                                     <Col>
                                         <h6>Categories</h6>
                                         <ul className="list-unstyled">
-                                            {categories.map(category => {
-                                                return (
-                                                    <>
-                                                        <li key={category.categoryId}>
-                                                            <NavDropdown.Item href="#action/3.1">
-                                                                {category.categoryName}
-                                                            </NavDropdown.Item>
-                                                        </li>
-                                                    </>
-                                                );
-                                            })}
+                                            {
+                                                loading ? <SpinnerMenu /> :
+                                                    categories.map(category => {
+                                                        return (
+
+                                                            <li key={category.categoryId}>
+                                                                <NavDropdown.Item href="#action/3.1">
+                                                                    {category.categoryName}
+                                                                </NavDropdown.Item>
+                                                            </li>
+
+                                                        );
+                                                    })}
                                         </ul>
                                     </Col>
                                 </Row>
                             </Container>
                         </div>
                     </NavDropdown>
-                    <Nav.Link href="#">Foods Menu</Nav.Link>
+                    <Nav.Link href="#"><p className='menu'>Foods Menu</p></Nav.Link>
                 </Nav>
             </Navbar.Collapse>
         </Container>

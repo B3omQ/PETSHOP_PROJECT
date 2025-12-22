@@ -1,0 +1,73 @@
+/* ProductCard.css */
+
+/* 1. BẮT BUỘC: Khung chứa ảnh phải là relative để làm mốc toạ độ */
+.product-image-container {
+  position: relative !important; /* Thêm !important để chắc chắn */
+  overflow: hidden; 
+}
+
+/* 2. Lớp phủ nút */
+.action-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px; 
+  
+  /* Trạng thái ban đầu: Ẩn xuống dưới */
+  transform: translateY(100%); 
+  transition: transform 0.3s ease-in-out;
+  
+  display: flex;
+  
+  /* QUAN TRỌNG: z-index cao hơn ảnh để không bị ảnh che mất */
+  z-index: 10; 
+}
+
+/* 3. KHI HOVER: Logic kích hoạt */
+/* Cách 1: Hover vào toàn bộ Card thì hiện */
+.card:hover .action-overlay,
+.product-card:hover .action-overlay {
+  transform: translateY(0) !important;
+}
+
+/* HOẶC Cách 2 (An toàn hơn): Hover vào vùng ảnh thì hiện */
+.product-image-container:hover .action-overlay {
+  transform: translateY(0) !important;
+}
+
+/* Các class màu sắc giữ nguyên như cũ */
+.btn-size {
+  background-color: white;
+  color: black;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  font-weight: bold;
+  border-top: 1px solid #e0e0e0;
+  cursor: pointer;
+}
+
+.btn-action {
+  background-color: #BE976E;
+  color: white;
+  width: 50%;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+}
+
+.btn-out-of-stock {
+  background-color: #BE976E;
+  color: white;
+  width: 100%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-weight: bold;
+}

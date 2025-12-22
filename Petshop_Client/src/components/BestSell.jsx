@@ -15,12 +15,12 @@ const BestSell = () => {
         fetchUsers()
     }, [])
     return (
-        <Carousel>
+        <Carousel className='carousel'>
             {products.map(product => (
                 <Carousel.Item key={product.productId}>
                     <div className="d-flex justify-content-center">
                         <img
-                            src={product.images[0]}
+                            src={product.images[0] || 'https://www.petsense.com/cdn/shop/files/1879992_grande.jpg?v=1752170897'}
                             alt={product.productName}
                             style={{
                                 height: '400px',

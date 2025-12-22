@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Petshop_Server.Dtos;
 using Petshop_Server.Models;
+using Petshop_Server.Services.Product;
 
 namespace Petshop_Server.Controllers
 {
@@ -10,10 +11,12 @@ namespace Petshop_Server.Controllers
     public class ProductController : ControllerBase
     {
         private readonly PetShopContext _context;
+        private readonly IProductService _service;
 
-        public ProductController(PetShopContext context)
+        public ProductController(PetShopContext context, IProductService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/product
@@ -66,6 +69,22 @@ namespace Petshop_Server.Controllers
                 return NotFound();
 
             return Ok(product);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchingProductByName([FromQuery] string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("Input is required");
+            }
+
+            var response = await _service.searchingProductResponses(name);
+            if (response == null)
+            {
+                return NotFound();
+            }
+            return Ok(response);
         }
     }
 }
