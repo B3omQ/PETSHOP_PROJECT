@@ -11,10 +11,10 @@ export const getAllProducts = async () => {
     }
 };
 
-export const getAllProductsByName = async (name) => {
+export const getAllProductsByName = async (name , category) => {
     try {
         const res = await instance.get(endpoint.PRODUCTS + 'search', {
-            params: { name }
+            params: { name , category}
         });
         return res.data;
     } catch (error) {

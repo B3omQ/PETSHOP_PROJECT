@@ -4,7 +4,6 @@ import Layout from '../layouts/Layout';
 import Homepage from '../pages/Homepage';
 import Errorpage from '../pages/Error/ErrorPage';
 import NotFoundPage from '../pages/Error/NotFoundPage';
-import CartOffCanvas from '../components/CartOffCanvas';
 import ProductDetail from '../pages/ProductDetail';
 import ProductByName from '../pages/ProductByName';
 const router = createBrowserRouter([

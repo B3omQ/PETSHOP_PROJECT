@@ -1,4 +1,5 @@
 export const endpoint = {
-PRODUCTS : "/api/product/",
-CATEGORIES : "/api/category"
+    PRODUCTS: "/api/product/",
+    CATEGORIES: "/api/category",
+    CARTS: "api/cart/"
 }

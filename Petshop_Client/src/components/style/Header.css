@@ -3,7 +3,7 @@
 }
 
 .img {
-    width: 15%;
+    width: 5%;
     height: 15%;
 }
 
@@ -15,7 +15,37 @@
     font-size: larger;
 }
 
-.move{
+.move {
     margin-right: 5%;
 }
 
+.delete {
+    text-decoration: none
+}
+
+.tgmobile__menu.active {
+    transform: translateX(0);
+}
+
+.tgmobile__menu-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.tgmenu__search {
+    display: inline-block;
+    margin-right: 25px; 
+    position: relative;
+    cursor: pointer;
+}
+
+.tgmenu__search i {
+    font-size: 24px; 
+    color: #121212;  
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+    display: block;
+}
+
+.tgmenu__search:hover i {
+    color: #BE976E; 
+}

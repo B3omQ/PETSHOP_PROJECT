@@ -1,0 +1,5 @@
+.price {
+    min-width: 90px;          /* chỉnh theo layout */
+    text-align: right;        /* căn phải */
+    font-variant-numeric: tabular-nums;
+}

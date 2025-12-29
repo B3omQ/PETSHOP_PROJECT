@@ -2,18 +2,41 @@ import React, { useEffect, useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import { getAllProducts } from '../services/products';
 import './style/BestSell.css'
-const BestSell = () => {
+import SpinnerMenu from './Loading/SpinnerMenu';
+
+const NewestProducts = () => {
     const [products, setProducts] = useState([]);
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await getAllProducts();
+                console.log(res);
+                setProducts(res);
+                setLoading(false);
+            } catch {
+                setLoading(true)
+            }
 
-        const fetchUsers = async () => {
-            const res = await getAllProducts();
-            setProducts(res);
         }
-
-        fetchUsers()
+        fetchProducts();
     }, [])
+    if (loading) {
+        return (
+            <>
+                <SpinnerMenu />
+                {/* <Container>
+          <Row>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Col md={4} key={index}>
+                <LoadingProducts />
+              </Col>
+            ))}
+          </Row>
+        </Container> */}
+            </>
+        );
+    }
     return (
         <Carousel className='carousel'>
             {products.map(product => (
@@ -42,4 +65,4 @@ const BestSell = () => {
     );
 };
 
-export default BestSell;
+export default NewestProducts;

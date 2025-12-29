@@ -4,39 +4,37 @@ import { useCart } from '../../context/Cart/CartProvider';
 import CartOffCanvas from '../CartOffCanvas';
 import SearchModal from './SearchModal';
 import { useSearchContext } from '../../context/Search/SearchProvider';
-
+import { useCartStore } from '../../stores/cartStore';
+import { Link } from 'react-router-dom';
+import '../style/Header.css'
 const User = () => {
     const { showCart, openCart } = useCart();
     const { showSearch, openSearch } = useSearchContext()
-
+    const { cart } = useCartStore();
+    const total = cart.reduce((total, item) => total + item.quantity, 0);
     return (
-        <Container>
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="ms-auto gap-3 user">
-
-                    <Nav.Link onClick={openCart}>
-                        <i className="bi bi-cart fs-5"></i>
-                    </Nav.Link>
+        <>
+            <div className="tgmenu__search" onClick={openSearch}>
+                <i className="bi bi-search fs-5"></i>
+            </div>
+            {showSearch ? <SearchModal /> : ''}
+            <div className="tgmenu__action tgmenu__action-three d-none d-md-block">
+                <ul className="list-wrap">
+                    <li className="header-login">
+                        <Link to="/contact">
+                            <i className="flaticon-user"></i>
+                        </Link>
+                    </li>
+                    <li className="header-cart header-cart-two">
+                        <a onClick={openCart}>
+                            <i className="flaticon-shopping-bag"></i>
+                            <span>{total}</span>
+                        </a>
+                    </li>
                     {showCart ? <CartOffCanvas /> : ''}
-                    <Nav.Link onClick={openSearch}>
-                        <i className="bi bi-search fs-5"></i>
-                    </Nav.Link>
-                    {showSearch ? <SearchModal /> : ''}
-                    <NavDropdown title={<i className="bi bi-person fs-5"></i>}
-                        id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#action/3.1"><i className="bi bi-person"></i> Profile</NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.2">
-                            <i class="bi bi-gear"></i> Settings
-                        </NavDropdown.Item>
-                        <NavDropdown.Item href="#action/3.3"><i class="bi bi-clock-history"></i> Order Tracking</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.4">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </NavDropdown.Item>
-                    </NavDropdown>
-                </Nav>
-            </Navbar.Collapse>
-        </Container>
+                </ul>
+            </div>
+        </>
     );
 };
 

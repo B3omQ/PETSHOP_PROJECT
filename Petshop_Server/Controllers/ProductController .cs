@@ -72,18 +72,9 @@ namespace Petshop_Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchingProductByName([FromQuery] string name)
+        public async Task<IActionResult> SearchingProductByName([FromQuery] string? name , int? category)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                return BadRequest("Input is required");
-            }
-
-            var response = await _service.searchingProductResponses(name);
-            if (response == null)
-            {
-                return NotFound();
-            }
+            var response = await _service.searchingProductResponses(name , category);
             return Ok(response);
         }
     }

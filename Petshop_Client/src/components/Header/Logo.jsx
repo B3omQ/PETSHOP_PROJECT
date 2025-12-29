@@ -1,14 +1,18 @@
 import React from 'react';
 import { Container, Navbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const Logo = () => {
     return (
-        <Container>
-            <Navbar.Brand href="/home" className="logo">
-                <img src="/logo4.png" className='img' />
-                Cuddle Pet
-            </Navbar.Brand>
-        </Container>
+        <div className="nav-logo">
+            <Link to="/">
+                <img
+                    src="/logo4.png"
+                    alt="Logo"
+                    style={{ width: '100px', height: 'auto', maxWidth: '100%' }}
+                />
+            </Link>
+        </div>
     );
 };
 

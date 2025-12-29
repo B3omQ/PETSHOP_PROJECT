@@ -3,26 +3,19 @@ import { Col, Container, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 import { getAllCategories } from '../../services/categories';
 import SpinnerMenu from '../Loading/SpinnerMenu';
 import '../style/Header.css'
+import { Link, useNavigate } from 'react-router-dom';
 const Menu = () => {
-    const [showCategories, setShowCategories] = useState(false);
-    const [showIntroduce, setShowIntroduce] = useState(false);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-    const showDropdown = () => {
-        setShowCategories(true);
-    };
-
-    const hideDropdown = () => {
-        setShowCategories(false);
-    };
-
-    const showIntroduction = () => {
-        setShowIntroduce(true);
+    const [activeCategory, setActiveCategory] = useState(0);
+    const [active, setActive] = useState('home');
+    const handleActive = (menuName) => {
+        setActive(menuName);
     }
-
-    const hideIntroduction = () => {
-        setShowIntroduce(false);
+    const handleActiveCategory = (index) => {
+        setActiveCategory(index)
     }
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -38,61 +31,48 @@ const Menu = () => {
     }, [])
 
     return (
-        <Container>
-            <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
-                <Nav className="gap-4">
-                    <NavDropdown title="Introduce" id="basic-nav-dropdown" className='menu'
-                        show={showIntroduce}
-                        onMouseEnter={showIntroduction}
-                        onMouseLeave={hideIntroduction}
-                    >
-                        <NavDropdown.Item href="#action/3.1">Guide</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.2">
-                            Store policies
-                        </NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item href="#action/3.2">
-                            Contact
-                        </NavDropdown.Item>
-                    </NavDropdown>
-                    <NavDropdown
-                        title="Categories"
-                        id="categories-dropdown"
-                        className="mega-menu-parent menu"
-                        show={showCategories}
-                        onMouseEnter={showDropdown}
-                        onMouseLeave={hideDropdown}
-                    >
-                        <div className="mega-menu-container">
-                            <Container fluid>
-                                <Row>
-                                    <Col>
-                                        <h6>Categories</h6>
-                                        <ul className="list-unstyled">
-                                            {
-                                                loading ? <SpinnerMenu /> :
-                                                    categories.map(category => {
-                                                        return (
+        <>
+            <div className="tgmenu__navbar-wrap tgmenu__navbar-wrap-two tgmenu__main-menu d-none d-xl-flex">
+                <ul className="navigation" >
+                    <li className={`menu-item-has-children ${active === 'home' ? 'active' : ''}`} onClick={() => handleActive('home')}>
+                        <Link to="/" className='delete'>Home</Link>
+                        <ul className="sub-menu">
+                            <li><Link to="/index">Pet Care & Veterinary</Link></li>
+                            <li><Link to="/index-2">Pet Breed</Link></li>
+                            <li><Link to="/index-3">Pet Adopt</Link></li>
+                            <li><Link to="/index-4">Pet Woocommerce</Link></li>
+                        </ul>
+                    </li>
+                    <li><Link to="/about" className='delete'>About</Link></li>
+                    <li className={`menu-item-has-children ${active === 'shop' ? 'active' : ''}`} onClick={() => handleActive('shop')}>
+                        <Link to="#" className='delete'>Categories</Link>
+                        <ul className="sub-menu">
+                            {
+                                loading ? <SpinnerMenu /> :
+                                    categories.map((category, index) => {
+                                        return (
 
-                                                            <li key={category.categoryId}>
-                                                                <NavDropdown.Item href="#action/3.1">
-                                                                    {category.categoryName}
-                                                                </NavDropdown.Item>
-                                                            </li>
+                                            <li key={category.categoryId} className={`${activeCategory === index ? 'active' : ''}`}>
+                                                <NavDropdown.Item onClick={
+                                                    () => {
+                                                        navigate(`/product/search?category=${category.categoryId}`)
+                                                        handleActiveCategory(index)
+                                                    }
+                                                }>
+                                                    {category.categoryName}
+                                                </NavDropdown.Item>
+                                            </li>
 
-                                                        );
-                                                    })}
-                                        </ul>
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </div>
-                    </NavDropdown>
-                    <Nav.Link href="#"><p className='menu'>Foods Menu</p></Nav.Link>
-                </Nav>
-            </Navbar.Collapse>
-        </Container>
+                                        );
+                                    })}
+                        </ul>
+                    </li>
+                    <li><Link to="/contact" className='delete'>contacts</Link></li>
+                </ul>
+            </div>
+        </>
+
+
     );
 };
 

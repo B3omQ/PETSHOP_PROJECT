@@ -7,10 +7,6 @@ import { getAllProductsByName } from '../../services/products';
 import SpinnerMenu from '../Loading/SpinnerMenu';
 import { useNavigate } from 'react-router-dom';
 const SearchModal = () => {
-    const SeachSchema = Yup.object().shape({
-        searchInput: Yup.string()
-            .required('Please enter what you want.'),
-    });
     const navigate = useNavigate();
     const [keyword, setKeyword] = useState("");
     const { showSearch, closeSearch } = useSearchContext();
@@ -73,7 +69,11 @@ const SearchModal = () => {
                     <i
                         className="bi bi-search fs-5 text-secondary"
                         style={{ cursor: "pointer" }}
-                        onClick={() => navigate(`product/search?name=${keyword}`)}
+                        onClick={() => {
+                            if (!keyword.trim()) return;
+                            navigate(`product/search?name=${keyword}`)
+                            closeSearch();
+                        }}
                     />
                 </div>
 

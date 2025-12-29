@@ -12,9 +12,9 @@ namespace Petshop_Server.Services.Product
             _repository = repository;
         }
 
-        public Task<List<SearchingProductResponse>> searchingProductResponses(string term)
+        public Task<List<SearchingProductResponse>> searchingProductResponses(string? term , int? categoryId)
         {
-            return _repository.searchingProducts(term);
+            return _repository.searchingProducts(term , categoryId);
         }
     }
 }
