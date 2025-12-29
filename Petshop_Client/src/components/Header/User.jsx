@@ -1,5 +1,3 @@
-import React, { useState } from 'react';
-import { Col, Container, Nav, Navbar, NavDropdown, Offcanvas, Row } from 'react-bootstrap';
 import { useCart } from '../../context/Cart/CartProvider';
 import CartOffCanvas from '../CartOffCanvas';
 import SearchModal from './SearchModal';
