@@ -19,7 +19,7 @@ const User = () => {
             <div className="tgmenu__action tgmenu__action-three d-none d-md-block">
                 <ul className="list-wrap">
                     <li className="header-login">
-                        <Link to="/contact">
+                        <Link to="/login">
                             <i className="flaticon-user"></i>
                         </Link>
                     </li>

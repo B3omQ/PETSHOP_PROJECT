@@ -6,6 +6,10 @@ import Errorpage from '../pages/Error/ErrorPage';
 import NotFoundPage from '../pages/Error/NotFoundPage';
 import ProductDetail from '../pages/ProductDetail';
 import ProductByName from '../pages/ProductByName';
+import Login from '../pages/Auth/Login';
+import Register from '../pages/Auth/Register';
+import AdminLayout from '../layouts/AdminLayout';
+import AdminDashboard from '../pages/Admin/AdminDashboard';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -25,15 +29,34 @@ const router = createBrowserRouter([
             },
             {
                 path: 'product/:id',
-                element: <ProductDetail/>
+                element: <ProductDetail />
             },
             {
                 path: 'product/search',
-                element: <ProductByName/>
+                element: <ProductByName />
             },
             {
-                path: '*' ,
-                element: <NotFoundPage/>
+                path: '/login',
+                element: <Login />
+            },
+            {
+                path: '/register',
+                element: <Register />
+            },
+            {
+                path: '*',
+                element: <NotFoundPage />
+            }
+        ]
+    },
+
+    {
+        path: '/admin',
+        element: <AdminLayout/> , 
+        children: [
+            {
+                path: '/admin',
+                element: <AdminDashboard/>
             }
         ]
     }

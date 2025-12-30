@@ -1,0 +1,9 @@
+.createAccount:hover {
+    color: white;
+}
+
+.createAccount {
+    background-color: transparent;
+    border-color: #BE976E;
+    color: #BE976E
+}
