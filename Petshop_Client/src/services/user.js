@@ -2,14 +2,27 @@ import instance from ".";
 import { endpoint } from "./endpoints";
 
 export const login = async (value) => {
-    try {
-        const res = await instance.post(endpoint.USERS , {
-            email : value.email , 
-            password : value.password
+        const res = await instance.post(endpoint.USERS + '/login', {
+            email: value.email,
+            password: value.password
         });
         return res.data;
+}
+
+export const signUp = async (value) => {
+    try {
+        const response = await instance.post(endpoint.USERS + '/signup', {
+            FullName: value.FullName,
+            Email: value.Email,
+            Password: value.Password
+        });
+        return response.data;
     } catch (error) {
         console.log(error);
-        throw error;
+        return error.data;
     }
+}
+
+export const logout = async () => {
+        return await instance.post(endpoint.USERS + '/logout');
 }

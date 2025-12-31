@@ -10,6 +10,7 @@ import Login from '../pages/Auth/Login';
 import Register from '../pages/Auth/Register';
 import AdminLayout from '../layouts/AdminLayout';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
+import TestAuth from '../pages/Auth/TestAuth';
 const router = createBrowserRouter([
     {
         path: '/',

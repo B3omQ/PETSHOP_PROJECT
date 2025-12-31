@@ -11,19 +11,34 @@ import '../../style/Auth/login.css'
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import ImageHolder from "../../components/Login/ImageHolder.jsx";
+import { useSearchContext } from "../../context/Search/SearchProvider.jsx";
+import SpinnerComponent from "../../components/Loading/Spinner.jsx";
 
 const Login = () => {
-    const petShopImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjw1vsnM4rAArUm5Quk7aTjkOM5Wc0gNg0YQ&s";
+    const [error, setError] = useState("");
+    const [loading , setLoading] = useState(true); 
+    const { openUserMenu } = useSearchContext()
     const navigate = useNavigate();
     const authorize = (role) => {
         role === 'admin' ? navigate('/admin') : navigate('/');
     }
 
     const handleLogin = async (value) => {
-        console.log(value)
-        const response = await login(value);
-        const role = response.role;
-        authorize(role);
+        try {
+            const response = await login(value);
+            console.log(response)
+            authorize(response.role);
+            localStorage.setItem('user', JSON.stringify(response));
+            openUserMenu();
+            // setLoading(false);
+        } catch (error) {
+            if (error.status === 401) {
+                setError(error.response.data);
+            } else {
+                setError("Something went wrong");
+            }
+        }
     };
 
     const LoginSchema = Yup.object().shape({
@@ -33,25 +48,17 @@ const Login = () => {
             .email('Required email format!')
             .required('Email Is Required'),
     });
+
+    // if(loading){
+    //     return (
+    //         <SpinnerComponent/>
+    //     )
+    // }
+
     return (
         <div className="form-body">
             <div className="iofrm-layout">
-                <div className="img-holder">
-                    <div className="bg"></div>
-                    <div className="info-holder">
-                        <img
-                            src={petShopImage}
-                            alt="Pet Shop Welcome"
-                            style={{
-                                maxWidth: '100%',
-                                height: 'auto',
-                                objectFit: 'cover',
-                                borderRadius: '12px',
-                                boxShadow: '0 8px 16px rgba(0,0,0,0.3)'
-                            }}
-                        />
-                    </div>
-                </div>
+                <ImageHolder />
                 <div className="form-holder">
                     <div className="form-content">
                         <div className="form-items with-bg">
@@ -74,7 +81,7 @@ const Login = () => {
                                 validationSchema={LoginSchema}
                             >
                                 <Form>
-                                    <div className="form-floating mb-3"> 
+                                    <div className="form-floating mb-3">
                                         <Field
                                             id="emailInput"
                                             className="form-control"
@@ -96,7 +103,6 @@ const Login = () => {
                                             className="form-control"
                                             type="password"
                                             name="password"
-                                            required
                                         />
                                         <label htmlFor="passwordInput">Password</label>
                                         <ErrorMessage
@@ -106,7 +112,9 @@ const Login = () => {
                                             style={{ textAlign: 'left', fontSize: '0.9rem', marginTop: '5px' }}
                                         />
                                     </div>
-                                    
+                                    <div>
+                                        {error ? error : ''}
+                                    </div>
                                     <div className="form-button d-flex">
                                         <button
                                             id="submit"
@@ -125,6 +133,12 @@ const Login = () => {
                                         <a
                                             href="/register"
                                             className="btn createAccount"
+                                            style={{
+                                                backgroundColor: 'white',
+                                                borderColor: '#BE976E',
+                                                color: '#BE976E',
+                                                marginRight: '10px'
+                                            }}
                                         >
                                             Create account
                                         </a>

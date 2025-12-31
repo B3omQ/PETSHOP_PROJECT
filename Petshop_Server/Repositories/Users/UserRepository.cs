@@ -10,6 +10,14 @@ namespace Petshop_Server.Repositories.Users
         {
             _context = context;
         }
+
+        public async Task CreateUser(User user)
+        {
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+        }
+
         public async Task<User?> GetUserByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(x => x.Email == email);

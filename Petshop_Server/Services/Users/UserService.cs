@@ -1,4 +1,6 @@
-﻿using Petshop_Server.Dtos.Users;
+﻿using BCrypt.Net;
+using Petshop_Server.Dtos.Users;
+using Petshop_Server.Models;
 using Petshop_Server.Repositories.Users;
 
 namespace Petshop_Server.Services.Users
@@ -16,19 +18,33 @@ namespace Petshop_Server.Services.Users
         {
             var user = await _userRepository.GetUserByEmail(email);
             if (user == null) return null;
-            //if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
-            //{
-            //    return null;
-            //}
-            if(!(password.Equals(user.PasswordHash)))
+            if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 return null;
             }
+            //if(!(password.Equals(user.PasswordHash)))
+            //{
+            //    return null;
+            //}
             return new LoginResponse
             {
                 Email = email,
                 Role = user.Role,
             };
+        }
+
+        public async Task SignUpAsync(SignUpRequest signUpRequest)
+        {
+            var hashPassword = BCrypt.Net.BCrypt.HashPassword(signUpRequest.Password);
+
+            var newUser = new User
+            {
+                Email = signUpRequest.Email,
+                PasswordHash = hashPassword,
+                FullName = signUpRequest.FullName, 
+            };
+
+            await _userRepository.CreateUser(newUser);
         }
     }
 }

@@ -1,15 +1,16 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: "https://localhost:7123/",
+    baseURL: "http://localhost:5242/",
+    withCredentials: true,
     // timeout: 1000,
 });
 
 instance.interceptors.request.use(
     function (config) {
-        if (localStorage.getItem("token")) {
-            config.headers.Authorization = "Bearer " + localStorage.getItem("token");
-        }
+        // if (localStorage.getItem("token")) {
+        //     config.headers.Authorization = "Bearer " + localStorage.getItem("token");
+        // }
 
         return config;
     },
