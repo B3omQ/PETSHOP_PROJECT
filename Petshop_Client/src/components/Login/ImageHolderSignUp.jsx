@@ -6,11 +6,11 @@ import '../../assets/loginAssets/css/iofrm-theme33.css';
 import '../../assets/loginAssets/js/jquery.min.js';
 import '../../assets/loginAssets/js/bootstrap.bundle.min.js';
 import '../../assets/loginAssets/js/main.js';
-const ImageHolder = () => {
+const ImageHolderSignUp = () => {
     const petShopImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjw1vsnM4rAArUm5Quk7aTjkOM5Wc0gNg0YQ&s";
 
     return (
-        <div className="img-holder">
+        <div className="img-holder img-holder-signup">
             <div className="bg"></div>
             <div className="info-holder">
                 <img
@@ -29,4 +29,4 @@ const ImageHolder = () => {
     );
 };
 
-export default ImageHolder;
+export default ImageHolderSignUp;

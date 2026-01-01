@@ -6,5 +6,6 @@ namespace Petshop_Server.Services.JWT
     public interface IJWTService
     {
         string generateToken(LoginResponse loginResponse);
+        string GenerateRefreshToken();
     }
 }

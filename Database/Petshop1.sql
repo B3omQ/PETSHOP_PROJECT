@@ -138,6 +138,18 @@ CREATE TABLE Reviews (
     FOREIGN KEY (ProductId) REFERENCES Products(ProductId),
     FOREIGN KEY (UserId) REFERENCES Users(UserId)
 );
+CREATE TABLE RefreshTokens (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Token NVARCHAR(MAX) NOT NULL,
+    UserId INT NOT NULL, 
+    Expires DATETIME2 NOT NULL,
+    Created DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+    Revoked DATETIME2 NULL,
+    CONSTRAINT FK_RefreshTokens_Users 
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+    ON DELETE CASCADE 
+);
+
 
 ---------------------------------------------------------
 -- SAMPLE DATA (OPTIONAL)

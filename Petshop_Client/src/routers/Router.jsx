@@ -45,6 +45,10 @@ const router = createBrowserRouter([
                 element: <Register />
             },
             {
+                path: '/testauth',
+                element: <TestAuth/>
+            },
+            {
                 path: '*',
                 element: <NotFoundPage />
             }

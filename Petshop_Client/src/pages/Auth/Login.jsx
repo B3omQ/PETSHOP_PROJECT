@@ -17,7 +17,7 @@ import SpinnerComponent from "../../components/Loading/Spinner.jsx";
 
 const Login = () => {
     const [error, setError] = useState("");
-    const [loading , setLoading] = useState(true); 
+    const [loading, setLoading] = useState(false);
     const { openUserMenu } = useSearchContext()
     const navigate = useNavigate();
     const authorize = (role) => {
@@ -25,19 +25,21 @@ const Login = () => {
     }
 
     const handleLogin = async (value) => {
+        setLoading(true);
         try {
             const response = await login(value);
-            console.log(response)
             authorize(response.role);
             localStorage.setItem('user', JSON.stringify(response));
-            openUserMenu();
-            // setLoading(false);
+            openUserMenu(response);
+
         } catch (error) {
             if (error.status === 401) {
                 setError(error.response.data);
             } else {
                 setError("Something went wrong");
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -49,11 +51,11 @@ const Login = () => {
             .required('Email Is Required'),
     });
 
-    // if(loading){
-    //     return (
-    //         <SpinnerComponent/>
-    //     )
-    // }
+    if (loading) {
+        return (
+            <SpinnerComponent />
+        )
+    }
 
     return (
         <div className="form-body">

@@ -35,6 +35,8 @@ public partial class PetShopContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
@@ -191,6 +193,27 @@ public partial class PetShopContext : DbContext
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasDefaultValue("customer");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable("RefreshTokens");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Token).IsRequired();
+
+            entity.Property(e => e.Expires).HasColumnType("datetime2");
+            entity.Property(e => e.Created)
+                .HasDefaultValueSql("(getutcdate())")
+                .HasColumnType("datetime2");
+            entity.Property(e => e.Revoked).HasColumnType("datetime2");
+
+            entity.HasOne(d => d.User)
+                .WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_RefreshTokens_Users")
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

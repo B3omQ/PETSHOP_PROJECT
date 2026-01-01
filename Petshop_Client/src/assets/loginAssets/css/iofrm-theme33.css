@@ -90,7 +90,13 @@ body {
 
 .img-holder {
     width: 550px;
-    height: 900px;
+    height: 800px;
+    background-color: #fff;
+}
+
+.img-holder-signup {
+    width: 550px;
+    height: 1200px;
     background-color: #fff;
 }
 

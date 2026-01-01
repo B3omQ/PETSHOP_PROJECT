@@ -4,7 +4,21 @@ const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
     const [showSearch, setShowSearch] = useState(false);
-    const [showUserMenu, setShowUserMenu] = useState(true);
+    const [showUserMenu, setShowUserMenu] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
+
+    const openUserMenu = (userData) => {
+        setShowUserMenu(userData);
+    };
+
+    const closeUserMenu = () => {
+        setShowUserMenu(null);
+        localStorage.removeItem('user'); 
+    };
+
     return (
         <SearchContext.Provider value={{
             showSearch,
@@ -12,8 +26,8 @@ export const SearchProvider = ({ children }) => {
             closeSearch: () => setShowSearch(false),
 
             showUserMenu,
-            openUserMenu: () => setShowUserMenu(true),
-            closeUserMenu: () => setShowUserMenu(false)
+            openUserMenu,
+            closeUserMenu,
         }}>
             {children}
         </SearchContext.Provider>
