@@ -5,9 +5,15 @@ namespace Petshop_Server.Services.Users
 {
     public interface IUserService
     {
-        Task<LoginResponse?> LoginAsync(string email, string password);
-        Task<SignUpResponse?> SignUpAsync(SignUpRequest signUpRequest);
+        Task<LoginResponse?> LoginAsync(LoginRequest loginRequest);
 
-        Task<LoginResponse?> GetByIdAsync(int id);
+        Task LogoutAsync(string refreshToken);
+        Task<InformResponse?> SignUpAsync(SignUpRequest signUpRequest);
+
+        Task<User?> GetByIdAsync(int id);
+
+        Task<InformResponse?> ForgotPasswordAsync(string email);
+
+        Task<RefreshTokenResponse?> RefreshToken(string refreshToken);
     }
 }

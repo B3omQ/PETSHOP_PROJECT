@@ -1,13 +1,9 @@
-﻿using Azure.Core;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Petshop_Server.Dtos.Users;
-using Petshop_Server.Models;
-using Petshop_Server.Services.JWT;
+using Petshop_Server.Services.RefreshTokens;
 using Petshop_Server.Services.Users;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Petshop_Server.Controllers
@@ -17,68 +13,26 @@ namespace Petshop_Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IJWTService _jWTService;
-        private readonly PetShopContext _context;
-        private readonly IConfiguration _config;
+        private readonly ITokenBlackListService _tokenBlackListService;
 
-        public UserController(IUserService userService, IJWTService jWTService, PetShopContext context
-            , IConfiguration config)
+        public UserController(IUserService userService , ITokenBlackListService tokenBlackListService)
         {
             _userService = userService;
-            _jWTService = jWTService;
-            _context = context;
-            _config = config;
+            _tokenBlackListService = tokenBlackListService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            var user = await _userService.LoginAsync(loginRequest.Email, loginRequest.Password);
-            if (user == null)
+            var response = await _userService.LoginAsync(loginRequest);
+            if (response == null)
                 return Unauthorized("Invalid email or password");
 
-
-            var accessMinutes = double.Parse(_config["Jwt:AccessTokenExpirationMinutes"]);
-            var refreshDays = double.Parse(_config["Jwt:RefreshTokenExpirationDays"]);
-
-            var accessToken = _jWTService.generateToken(user);
-            var refreshToken = _jWTService.GenerateRefreshToken();
-
-            var refreshTokenEntity = new RefreshToken
-            {
-                Token = refreshToken,
-                UserId = user.UserId,
-                Expires = DateTime.UtcNow.AddDays(refreshDays)
-            };
-            var oldTokens = _context.RefreshTokens
-           .Where(t => t.UserId == user.UserId && (t.Revoked != null || t.Expires < DateTime.UtcNow)).ToList();
-
-            if (oldTokens.Any())
-            {
-                _context.RefreshTokens.RemoveRange(oldTokens);
-            }
-
-            _context.RefreshTokens.Add(refreshTokenEntity);
-            await _context.SaveChangesAsync();
-
-            //for deploy
-            //var cookieOptions = new CookieOptions
-            //{
-            //    HttpOnly = true,  // JS không đọc được (Chống XSS)
-            //    Secure = true,    // Chỉ chạy trên HTTPS (Localhost vẫn chạy được nếu dev cert ok)
-            //    SameSite = SameSiteMode.Strict, // Chống CSRF
-            //    Expires = DateTime.UtcNow.AddMinutes(60) // Thời gian sống của Cookie
-            //};
+            SetCookie("accessToken", response.AccessToken, response.AccessTokenExpires);
+            SetCookie("refreshToken", response.RefreshToken, response.RefreshTokenExpires);
 
 
-            SetCookie("accessToken", accessToken, DateTime.UtcNow.AddMinutes(accessMinutes));
-            SetCookie("refreshToken", refreshToken, DateTime.UtcNow.AddDays(refreshDays));
-
-
-            return Ok(new
-            {
-                user
-            });
+            return Ok(response.UserResponse);
         }
 
         private void SetCookie(string key, string value, DateTime expires)
@@ -100,43 +54,17 @@ namespace Petshop_Server.Controllers
             var refreshToken = Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return Unauthorized("Không có Refresh Token");
+                return Unauthorized("No Refresh Token");
             }
 
-            var storedToken = await _context.RefreshTokens
-        .FirstOrDefaultAsync(x => x.Token == refreshToken);
-
-            if (storedToken == null || !storedToken.IsActive)
+            var response = await _userService.RefreshToken(refreshToken);
+            if (response == null)
             {
-                return Unauthorized("Refresh Token không hợp lệ hoặc đã hết hạn");
-            }
-            var user = await _userService.GetByIdAsync(storedToken.UserId);
-
-            var oldTokens = _context.RefreshTokens
-            .Where(t => t.UserId == user.UserId && (t.Revoked != null || t.Expires < DateTime.UtcNow)).ToList();
-
-            if (oldTokens.Any())
-            {
-                _context.RefreshTokens.RemoveRange(oldTokens);
+                return Unauthorized();
             }
 
-            if (user == null) return Unauthorized("User không tồn tại");
-
-            var newAccessToken = _jWTService.generateToken(user);
-            var newRefreshToken = _jWTService.GenerateRefreshToken();
-
-            storedToken.Revoked = DateTime.UtcNow;
-            var newRefreshTokenEntity = new RefreshToken
-            {
-                Token = newRefreshToken,
-                UserId = user.UserId,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
-            _context.RefreshTokens.Add(newRefreshTokenEntity);
-            await _context.SaveChangesAsync();
-
-            SetCookie("accessToken", newAccessToken, DateTime.UtcNow.AddMinutes(15));
-            SetCookie("refreshToken", newRefreshToken, DateTime.UtcNow.AddDays(7));
+            SetCookie("accessToken", response.AccessToken, response.AccessTokenExpires);
+            SetCookie("refreshToken", response.RefreshToken, response.RefreshTokenExpires);
 
             return Ok(new { Message = "Refreshed successfully" });
         }
@@ -144,17 +72,24 @@ namespace Petshop_Server.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            var accessToken = Request.Cookies["accessToken"];
+
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jsonToken = handler.ReadToken(accessToken) as JwtSecurityToken;
+
+                if (jsonToken != null)
+                {
+                    var expirationDate = jsonToken.ValidTo;
+
+                    await _tokenBlackListService.BlacklistTokenAsync(accessToken, expirationDate);
+                }
+            }
             var refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrEmpty(refreshToken))
             {
-                var storedToken = await _context.RefreshTokens
-                .FirstOrDefaultAsync(x => x.Token == refreshToken);
-
-                if (storedToken != null)
-                {
-                    storedToken.Revoked = DateTime.UtcNow; // Hủy token trong DB
-                    await _context.SaveChangesAsync();
-                }
+                await _userService.LogoutAsync(refreshToken);
             }
 
             DeleteCookie("accessToken");
@@ -222,6 +157,21 @@ namespace Petshop_Server.Controllers
                 UserId = userId,
                 ServerTime = DateTime.Now
             });
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest forgotPasswordRequest)
+        {
+            var response = await _userService.ForgotPasswordAsync(forgotPasswordRequest.Email);
+            if (!response.Success)
+            {
+                return NotFound(new
+                {
+                    message = "Validation Fail",
+                    errors = response.Errors
+                });
+            }
+            return Ok(response);
         }
     }
 }

@@ -11,6 +11,8 @@ import Register from '../pages/Auth/Register';
 import AdminLayout from '../layouts/AdminLayout';
 import AdminDashboard from '../pages/Admin/AdminDashboard';
 import TestAuth from '../pages/Auth/TestAuth';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
+import TestAuth2 from '../pages/Auth/TestAuth2';
 const router = createBrowserRouter([
     {
         path: '/',
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
             {
                 path: '/testauth',
                 element: <TestAuth/>
+            },
+            {
+                path: '/testauth2',
+                element: <TestAuth2/>
+            },
+            {
+                path: '/forgot-password',
+                element: <ForgotPassword/>
             },
             {
                 path: '*',

@@ -10,7 +10,7 @@ import '../../assets/loginAssets/js/main.js';
 import '../../style/Auth/login.css'
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageHolder from "../../components/Login/ImageHolder.jsx";
 import { useSearchContext } from "../../context/Search/SearchProvider.jsx";
 import SpinnerComponent from "../../components/Loading/Spinner.jsx";
@@ -18,19 +18,28 @@ import SpinnerComponent from "../../components/Loading/Spinner.jsx";
 const Login = () => {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const { openUserMenu } = useSearchContext()
+    const { openUserMenu } = useSearchContext();
     const navigate = useNavigate();
     const authorize = (role) => {
         role === 'admin' ? navigate('/admin') : navigate('/');
     }
 
     const handleLogin = async (value) => {
+        const rememberMe = value.rememberMe;
+        localStorage.setItem('rememberMe', rememberMe);
         setLoading(true);
         try {
             const response = await login(value);
             authorize(response.role);
             localStorage.setItem('user', JSON.stringify(response));
             openUserMenu(response);
+            const email = response.email;
+            if (rememberMe) {
+                localStorage.setItem('email', email);
+            }
+            else {
+                localStorage.removeItem('email', email);
+            }
 
         } catch (error) {
             if (error.status === 401) {
@@ -47,7 +56,7 @@ const Login = () => {
         password: Yup.string()
             .required('Password Is Required'),
         email: Yup.string()
-            .email('Required email format!')
+            .email('Invalid Email Format!')
             .required('Email Is Required'),
     });
 
@@ -75,9 +84,9 @@ const Login = () => {
                             <p>Access to the most powerfull tool in the entire design and web industry.</p>
                             <Formik
                                 initialValues={{
-                                    email: localStorage.getItem("savedEmail") || ""
+                                    email: localStorage.getItem('email') || ''
                                     , password: ''
-                                    // , rememberMe: localStorage.getItem("savedEmail") ? true : false
+                                    , rememberMe: localStorage.getItem('rememberMe') === 'true' ? true : false
                                 }}
                                 onSubmit={handleLogin}
                                 validationSchema={LoginSchema}
@@ -114,7 +123,13 @@ const Login = () => {
                                             style={{ textAlign: 'left', fontSize: '0.9rem', marginTop: '5px' }}
                                         />
                                     </div>
-                                    <div>
+                                    <div className="d-flex justify-content-between align-items mb-3">
+                                        <Field type="checkbox" name="rememberMe" className="form-check-input" id="rememberMe" />
+                                        <label htmlFor="rememberMe" className="form-check-label">Remember me</label>
+                                        <Link to="/forgot-password" className="small text-decoration-none"
+                                        style={{color: '#BE976E'}}>Forgot password?</Link>
+                                    </div>
+                                    <div className="text-danger text-start">
                                         {error ? error : ''}
                                     </div>
                                     <div className="form-button d-flex">

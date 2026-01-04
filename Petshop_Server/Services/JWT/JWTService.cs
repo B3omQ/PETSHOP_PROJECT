@@ -18,41 +18,23 @@ namespace Petshop_Server.Services.JWT
             _config = config;
         }
 
-        public string generateToken(LoginResponse user)
+        public string generateToken(User user)
         {
-            //var claims = new[]
-            //{
-            //    new Claim(ClaimTypes.NameIdentifier , user.UserId.ToString()),
-            //    new Claim(ClaimTypes.Email, user.Email),
-            //    new Claim(ClaimTypes.Role, user.Role)
-            //};
-
-            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            //var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            //var token = new JwtSecurityToken(
-            //issuer: _config["Jwt:Issuer"],
-            //audience: _config["Jwt:Audience"],
-            //claims: claims,
-            //expires: DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:ExpireDays"])),
-            //signingCredentials: creds
-            //);
-
-            //return new JwtSecurityTokenHandler().WriteToken(token);
-
             var jwtSettings = _config.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
-            var minutes = double.Parse(jwtSettings["AccessTokenExpirationMinutes"]);
+            var accessMinutes = double.Parse(_config["Jwt:AccessTokenExpirationMinutes"]);
 
+            var accessTokenExpires = DateTime.UtcNow.AddMinutes(accessMinutes);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
-        }),
-                // SỬA: Dùng AddMinutes thay vì AddDays
-                Expires = DateTime.UtcNow.AddMinutes(minutes),
+                    {
+                     new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                     new Claim(ClaimTypes.Email, user.Email),
+                     new Claim(ClaimTypes.Role, user.Role) ,
+                     new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    }),
+                Expires = accessTokenExpires,
 
                 Issuer = jwtSettings["Issuer"],
                 Audience = jwtSettings["Audience"],

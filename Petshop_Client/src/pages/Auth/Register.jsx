@@ -25,7 +25,6 @@ const Register = () => {
             setLoading(false)
             navigate('/login');
         } catch (error) {
-            console.log("Backend trả về:", error.response?.data);
             setLoading(false)
             setSubmitting(false);
             const serverErrors = error?.response?.data?.errors;
@@ -59,12 +58,6 @@ const Register = () => {
             .required('Address is required'),
 
     });
-
-    // if (loading) {
-    //     return (
-    //         <SpinnerComponent />
-    //     )
-    // }
 
     return (
         <div className="form-body">

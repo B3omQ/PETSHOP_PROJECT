@@ -2,7 +2,7 @@
 
 namespace Petshop_Server.Dtos.Users
 {
-    public class LoginResponse
+    public class RefreshTokenResponse
     {
         public int UserId { get; set; }
         public string Email { get; set; }

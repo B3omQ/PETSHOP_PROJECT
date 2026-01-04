@@ -30,3 +30,16 @@ export const signUp = async (value) => {
 export const logout = async () => {
     return await instance.post(endpoint.USERS + '/logout');
 }
+
+export const forgotPassword = async (value) => {
+    try {
+        const response = await instance.post(endpoint.USERS + '/forgot-password', {
+            Email: value.email,
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        throw error;
+    }
+
+}

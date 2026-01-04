@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Petshop_Server.MiddleWare;
 using Petshop_Server.Models;
 using System.Text;
 
@@ -39,7 +40,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
+        ClockSkew = TimeSpan.Zero, // Mặc định là 5 phút, set về 0 để chặn ngay lập tức
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(
@@ -60,6 +61,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         }
     };
 });
+
+builder.Services.AddMemoryCache(); 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -77,6 +81,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowReact");
 
 app.UseAuthentication();
+
+app.UseMiddleware<JwtBlacklistMiddleware>();
 
 app.UseAuthorization();
 
