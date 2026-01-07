@@ -2,9 +2,7 @@ name: CI ASP.NET Core Web
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
