@@ -2,7 +2,12 @@ name: CI ASP.NET Core Web
 
 on:
   push:
+    branches:
+    - master
+    - develop
   pull_request:
+    - master
+    - develop 
 
 jobs:
   build:
